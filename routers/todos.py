@@ -7,8 +7,8 @@ from sqlalchemy import cast, Integer
 from sqlalchemy.orm import Session
 from starlette import status
 
-from models import Todos
-from database import SessionLocal
+from app.db.models import Todos
+from app.core.database import SessionLocal
 from .auth import get_current_user, UserInDB
 
 router = APIRouter(prefix='/todos', tags=["Todos"])

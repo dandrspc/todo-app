@@ -7,17 +7,15 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
 
-from database import SessionLocal
-from models import Users
+from app.core.database import SessionLocal
+from app.db.models import Users
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 
-router = APIRouter(prefix='/auth', tags=["Auth"])
+from app.core.config import settings
 
-SECRET_KEY = '976fe2c34da4db6499952f8af0ade3106d96f9f1220e4758971526066a7863dd'
-ALGORITHM = 'HS256'
-EXPIRATION_TIME_IN_SECONDS = 3600
+router = APIRouter(prefix='/auth', tags=["Auth"])
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/auth/token')
@@ -84,7 +82,7 @@ def create_access_token(
     expires_at = datetime.now(timezone.utc) + expires_delta
     to_encode.update({'exp': expires_at})
 
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
     expires_in_seconds = int(expires_delta.total_seconds())
 
@@ -100,7 +98,7 @@ def create_access_token(
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]) -> UserInDB:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
         username: str = payload.get('sub')
         user_id: int = payload.get('id')
         user_role: str = payload.get('role')
@@ -147,7 +145,7 @@ async def login_for_token(form_data: Annotated[OAuth2PasswordRequestForm, Depend
         user.username,
         user.id,
         user.role,
-        timedelta(seconds=EXPIRATION_TIME_IN_SECONDS)
+        timedelta(seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS)
     )
     print(access_token)
     return access_token
