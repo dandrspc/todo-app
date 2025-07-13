@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.db import models
 from app.core.database import engine
-from routers import auth, todos, admin
+from app.api.endpoints import auth, todos, admin
 
 app = FastAPI(
     title="Todos API",

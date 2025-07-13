@@ -1,26 +1,10 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException, Path
-from sqlalchemy.orm import Session
-from starlette import status
 
+from starlette import status
+from app.api.deps import user_dependency, db_dependency
 from app.db.models import Todos
-from app.core.database import SessionLocal
-from .auth import get_current_user, UserInDB
 
 router = APIRouter(prefix='/admin', tags=["Admin"])
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-db_dependency = Annotated[Session, Depends(get_db)]
-user_dependency = Annotated[UserInDB, Depends(get_current_user)]
 
 
 @router.get("/todos", status_code=status.HTTP_200_OK)
