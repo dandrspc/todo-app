@@ -21,6 +21,7 @@ async def create_user(db: db_dependency,
     create_user_model = Users(
         email=create_user_request.email,
         username=create_user_request.username,
+        phone_nunber=create_user_request.phone_number,
         first_name=create_user_request.first_name,
         last_name=create_user_request.last_name,
         role=create_user_request.role,
@@ -47,5 +48,4 @@ async def login_for_token(form_data: Annotated[OAuth2PasswordRequestForm, Depend
         user.role,
         timedelta(seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS)
     )
-    print(access_token)
     return access_token

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Token(BaseModel):
@@ -12,6 +12,7 @@ class Token(BaseModel):
 class CreateUserRequest(BaseModel):
     username: str
     email: str
+    phone_number: str = Field(min_length=8)
     first_name: str
     last_name: str
     password: str

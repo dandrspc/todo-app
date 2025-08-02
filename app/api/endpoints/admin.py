@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, HTTPException
 
 from starlette import status
 from app.api.deps import user_dependency, db_dependency
